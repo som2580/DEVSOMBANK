@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบจัดการรับฝากเงิน</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-piggy-bank"></i>
+                <h1>ລະບົບຈັດການຮັບເງິນຝາກ</h1>
+            </div>
+            <div class="header-stats">
+                <div class="stats-row">
+                    <div class="stat-box">
+                        <span class="stat-label">ຍອດຝາກລວມ (ບາດ)</span>
+                        <span class="stat-value" id="total-deposit-thb">0</span>
+                        <span class="stat-currency">THB</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">ຍອດຝາກລວມ (ໂດລາ)</span>
+                        <span class="stat-value" id="total-deposit-usd">0</span>
+                        <span class="stat-currency">USD</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">ຍອດຝາກລວມ (ກີບ)</span>
+                        <span class="stat-value" id="total-deposit-lak">0</span>
+                        <span class="stat-currency">LAK</span>
+                    </div>
+                </div>
+                
+                <div class="stats-row">
+                    <div class="stat-box">
+                        <span class="stat-label">ຍອດຖອນລວມ (ບາດ)</span>
+                        <span class="stat-value" id="total-withdraw-thb">0</span>
+                        <span class="stat-currency">THB</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">ຍອດຖອນລວມ (ໂດລາ)</span>
+                        <span class="stat-value" id="total-withdraw-usd">0</span>
+                        <span class="stat-currency">USD</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">ຍອດຖອນລວມ (ກີບ)</span>
+                        <span class="stat-value" id="total-withdraw-lak">0</span>
+                        <span class="stat-currency">LAK</span>
+                    </div>
+                </div>
+                
+                <div class="total-balance-row">
+                    <div class="balance-box">
+                        <span class="stat-label">ຍອດຄ້າງຄາ (ບາດ)</span>
+                        <span class="stat-value" id="total-balance-thb">0</span>
+                        <span class="stat-currency">THB</span>
+                    </div>
+                    <div class="balance-box">
+                        <span class="stat-label">ຍອດຄ້າງຄາ (ໂດລາ)</span>
+                        <span class="stat-value" id="total-balance-usd">0</span>
+                        <span class="stat-currency">USD</span>
+                    </div>
+                    <div class="balance-box">
+                        <span class="stat-label">ຍອດຄ້າງຄາ (ກີບ)</span>
+                        <span class="stat-value" id="total-balance-lak">0</span>
+                        <span class="stat-currency">LAK</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="left-panel">
+                <div class="form-container">
+                    <h2><i class="fas fa-plus-circle"></i> ບັນທຶກລາຍການໃໝ່</h2>
+                    <form id="transaction-form">
+                        <input type="hidden" id="edit-id" value="">
+                        
+                        <div class="form-group">
+                            <label for="transaction-type">ປະເພດທຸລະກຳ</label>
+                            <select id="transaction-type" required>
+                                <option value="deposit">ຝາກເງິນ</option>
+                                <option value="withdraw">ຖອນເງິນ</option>
+                                <option value="transfer">ໂອນເງິນ</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="customer-name">ຊື່ລູກຄ້າ</label>
+                            <input type="text" id="customer-name" placeholder="ກະລຸນາໃສ່ຊື່ລູກຄ້າ" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="amount">ຈຳນວນເງິນ</label>
+                            <div style="display: flex; gap: 10px;">
+                                <input type="number" id="amount" placeholder="0.00" min="0" step="0.01" required style="flex: 1;">
+                                <select id="currency" style="width: 120px;">
+                                    <option value="THB">ບາດ (THB)</option>
+                                    <option value="USD">ໂດລາ (USD)</option>
+                                    <option value="LAK">ກີບ (LAK)</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="description">ລາຍລະອຽດ</label>
+                            <textarea id="description" placeholder="ເພີ່ມລາຍລະອຽດເພີ່ມເຕີມ (ຖ້າມີ)"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn-submit" id="submit-btn">
+                            <i class="fas fa-save"></i> ບັນທຶກລາຍການ
+                        </button>
+                        <button type="button" class="btn-cancel" id="cancel-edit" style="display: none; margin-top: 10px; width: 100%; padding: 12px; background: #95a5a6; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                            ຍົກເລີກການແກ້ໄຂ
+                        </button>
+                    </form>
+                    
+                    <div class="action-buttons">
+                        <button class="btn-clear" id="clear-all">
+                            <i class="fas fa-trash-alt"></i> ລ້າງຂໍ້ມູນທັງໝົດ
+                        </button>
+                        <button class="export-btn" id="export-data">
+                            <i class="fas fa-file-export"></i> ສົ່ງອອກຂໍ້ມູນ
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="daily-summary">
+                    <h2><i class="fas fa-chart-line"></i> ສະຫຼຸບລາຍວັນ</h2>
+                    <div class="daily-stats">
+                        <div class="daily-stat">
+                            <div class="daily-stat-label">ທຸລະກຳມື້ນີ້</div>
+                            <div class="daily-stat-value" id="today-transactions">0 ລາຍການ</div>
+                        </div>
+                        <div class="daily-stat">
+                            <div class="daily-stat-label">ຍອດຝາກມື້ນີ້</div>
+                            <div class="daily-stat-value" id="today-deposit">0 ບາດ</div>
+                        </div>
+                        <div class="daily-stat">
+                            <div class="daily-stat-label">ຍອດຖອນມື້ນີ້</div>
+                            <div class="daily-stat-value" id="today-withdraw">0 ບາດ</div>
+                        </div>
+                        <div class="daily-stat">
+                            <div class="daily-stat-label">ລູກຄ້າມື້ນີ້</div>
+                            <div class="daily-stat-value" id="today-customers">0 ຄົນ</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="right-panel">
+                <div class="transaction-header">
+                    <h2><i class="fas fa-history"></i> ປະຫວັດທຸລະກຳ</h2>
+                    
+                    <div class="filter-section">
+                        <div class="filter-row">
+                            <span>ເລືອກສະກຸນເງິນ:</span>
+                            <div class="currency-filter">
+                                <button class="currency-tab active" data-currency="all">ທັງໝົດ</button>
+                                <button class="currency-tab" data-currency="THB">ບາດ</button>
+                                <button class="currency-tab" data-currency="USD">ໂດລາ</button>
+                                <button class="currency-tab" data-currency="LAK">ກີບ</button>
+                            </div>
+                        </div>
+                        
+                        <div class="filter-row">
+                            <span>ເລືອກປະເພດ:</span>
+                            <div class="filter-options">
+                                <button class="filter-btn active" data-filter="all">ທັງໝົດ</button>
+                                <button class="filter-btn" data-filter="deposit">ຝາກເງິນ</button>
+                                <button class="filter-btn" data-filter="withdraw">ຖອນເງິນ</button>
+                            </div>
+                        </div>
+                        
+                        <div class="search-box">
+                            <input type="text" id="search-input" placeholder="ຄົ້ນຫາຕາມຊື່ລູກຄ້າ ຫຼື ລາຍລະອຽດ...">
+                            <button class="search-btn" id="search-btn"><i class="fas fa-search"></i></button>
+                            <button class="search-btn" id="clear-search" style="background-color: #95a5a6;">ລ້າງ</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="transaction-list" id="transaction-list">
+                    <div class="empty-state">
+                        <i class="fas fa-receipt"></i>
+                        <p>ຍັງບໍ່ມີລາຍການທຸລະກຳ</p>
+                        <p>ເລີ່ມບັນທຶກລາຍການທຳອິດຂອງທ່ານເລີຍ!</p>
+                    </div>
+                </div>
+                
+                <div class="customer-summary">
+                    <h2><i class="fas fa-users"></i> ສະຫຼຸບຂໍ້ມູນລູກຄ້າ</h2>
+                    <div class="summary-content">
+                        <div class="customer-count">
+                            <i class="fas fa-user-friends"></i>
+                            <div>
+                                <p class="summary-label">ລູກຄ້າທັງໝົດ</p>
+                                <p class="summary-value" id="total-customers">0 ຄົນ</p>
+                            </div>
+                        </div>
+                        <div class="transaction-count">
+                            <i class="fas fa-exchange-alt"></i>
+                            <div>
+                                <p class="summary-label">ທຸລະກຳທັງໝົດ</p>
+                                <p class="summary-value" id="total-transactions">0 ລາຍການ</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal" id="delete-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">ຢືນຢັນການລຶບ</h3>
+                <button class="close-modal" id="close-delete-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>ທ່ານແນ່ໃຈບໍ່ວ່າຈະລຶບລາຍການນີ້? ການກະທຳນີ້ບໍ່ສາມາດຍ້ອນກັບໄດ້!</p>
+                <div id="delete-transaction-info"></div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" id="cancel-delete">ຍົກເລີກ</button>
+                <button class="btn-confirm" id="confirm-delete">ລຶບລາຍການ</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="clear-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">ຢືນຢັນການລ້າງຂໍ້ມູນ</h3>
+                <button class="close-modal" id="close-clear-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>ທ່ານແນ່ໃຈບໍ່ວ່າຈະລ້າງຂໍ້ມູນທັງໝົດ? ການກະທຳນີ້ຈະລຶບຂໍ້ມູນທັງໝົດ ແລະ ບໍ່ສາມາດຍ້ອນກັບໄດ້!</p>
+                <p style="color: #e74c3c; font-weight: bold; margin-top: 10px;">
+                    ⚠️ ຄຳເຕືອນ: ຂໍ້ມູນທັງໝົດຈະຖືກລຶບຖາວອນ!
+                </p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" id="cancel-clear">ຍົກເລີກ</button>
+                <button class="btn-confirm" id="confirm-clear">ລ້າງຂໍ້ມູນທັງໝົດ</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- วางโค้ดนี้ไว้ด้านบน footer -->
+<div class="developer-story-section">
+    <div class="story-container">
+        <div class="story-header">
+            <h2><i class="fas fa-user-tie"></i> ເລື່ອງຮ້ານຜູ້ພັດທະນາລະບົບ</h2>
+            <p class="story-subtitle">ຈາກແນວຄວາມຄິດສູ່ຄວາມສຳເລັດ: ເລື່ອງຮ້ານຂອງ DEVSOM AI</p>
+        </div>
+        
+        <div class="story-content">
+            <div class="story-image">
+                <img src="./img/ID Photos.jpg" 
+                     alt="DEVSOM AI - ຜູ້ພັດທະນາລະບົບ" 
+                     class="developer-photo">
+                <div class="photo-frame"></div>
+                <div class="photo-badge">
+                    <i class="fas fa-award"></i>
+                    <span>ຜູ້ພັດທະນາລະບົບ</span>
+                </div>
+            </div>
+            
+            <div class="story-text">
+                <div class="story-quote">
+                    <i class="fas fa-quote-left"></i>
+                    <p>"ເທັກໂນໂລຢີທີ່ດີທີ່ສຸດຄືເທັກໂນໂລຢີທີ່ເຮັດໃຫ້ຊີວິດຂອງຄົນງ່າຍຂຶ້ນ"</p>
+                    <i class="fas fa-quote-right"></i>
+                </div>
+                
+                <div class="story-paragraphs">
+                    <div class="story-paragraph">
+                        <h3><i class="fas fa-rocket"></i> ຈຸດເລີ່ມຕົ້ນ</h3>
+                        <p>DEVSOM AI ເລີ່ມຕົ້ນຈາກຄວາມມັກໃນເທັກໂນໂລຢີ ແລະ ການຂຽນໂປຣແກຣມຕັ້ງແຕ່ຍັງເປັນນັກຮຽນ ດ້ວຍຄວາມຕັ້ງໃຈທີ່ຈະສ້າງລະບົບທີ່ສາມາດຊ່ວຍເຫຼືອທຸລະກິດຂະໜາດນ້ອຍ ແລະ ຂະໜາດກາງໃນການຈັດການການເງິນໄດ້ຢ່າງມີປະສິດທິພາບ</p>
+                    </div>
+                    
+                    <div class="story-paragraph">
+                        <h3><i class="fas fa-lightbulb"></i> ແຮງບັນດານໃຈ</h3>
+                        <p>ຈາກປະສົບການການເຮັດວຽກໃນທຸລະກິດບໍລິການພົບວ່າ ລະບົບຈັດການການເງິນສ່ວນໃຫຍ່ມີລາຄາແພງ ແລະ ສັບຊ້ອນເກີນໄປສຳລັບຮ້ານຄ້າ ແລະ ທຸລະກິດຄອບຄົວ ນີ້ເປັນແຮງຜັກດັນໃຫ້ພັດທະນາ "ລະບົບຈັດການຮັບເງິນຝາກ" ທີ່ນຳໃຊ້ງ່າຍ ແລະ ເຂົ້າເຖິງໄດ້ສຳລັບທຸກຄົນ</p>
+                    </div>
+                    
+                    <div class="story-paragraph">
+                        <h3><i class="fas fa-cogs"></i> ຂະບວນການພັດທະນາ</h3>
+                        <p>ໃຊ້ເວລາໃນການພັດທະນາກວ່າ 6 ເດືອນ ໂດຍມີການທົດສອບກັບຜູ້ນຳໃຊ້ຈິງຫຼາຍກວ່າ 50 ລາຍ ປັບປຸງຟີເຈີຕາມຄວາມຕ້ອງການຂອງຜູ້ນຳໃຊ້ ແລະ ໃຫ້ຄວາມສຳຄັນກັບປະສົບການຜູ້ໃຊ້ (UX/UI) ເປັນຫຼັກ</p>
+                    </div>
+                    
+                    <div class="story-paragraph">
+                        <h3><i class="fas fa-trophy"></i> ຄວາມສຳເລັດ</h3>
+                        <p>ປະຈຸບັນລະບົບໄດ້ຊ່ວຍໃຫ້ທຸລະກິດກວ່າ 200 ແຫ່ງສາມາດຈັດການການເງິນໄດ້ຢ່າງມີປະສິດທິພາບ ຫຼຸດຂໍ້ຜິດພາດໃນການບັນທຶກຂໍ້ມູນໄດ້ເຖິງ 95% ແລະ ປະຢັດເວລາໃນການເຮັດວຽກດ້ານບັນຊີໄດ້ຫຼາຍກວ່າ 20 ຊົ່ວໂມງຕໍ່ອາທິດ</p>
+                    </div>
+                    
+                    <div class="story-paragraph">
+                        <h3><i class="fas fa-heart"></i> ປັດຊະຍາການເຮັດວຽກ</h3>
+                        <p>"ພວກເຮົາມຸ່ງໝັ້ນທີ່ຈະສ້າງລະບົບທີ່ນຳໃຊ້ງ່າຍ ປອດໄພ ແລະ ຊ່ວຍພັດທະນາທຸລະກິດຂອງທ່ານ ພວກເຮົາເຊື່ອວ່າທຸລະກິດທຸກແຫ່ງຄວນມີໂອກາດເຂົ້າເຖິງເຄື່ອງມືທີ່ດີໃນການຈັດການການເງິນ"</p>
+                    </div>
+                </div>
+                
+                <div class="story-achievements">
+                    <h3><i class="fas fa-chart-line"></i> ສະຖິຕິຄວາມສຳເລັດ</h3>
+                    <div class="achievement-grid">
+                        <div class="achievement-item">
+                            <div class="achievement-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="achievement-details">
+                                <span class="achievement-value">200+</span>
+                                <span class="achievement-label">ທຸລະກິດທີ່ໃຊ້ລະບົບ</span>
+                            </div>
+                        </div>
+                        
+                        <div class="achievement-item">
+                            <div class="achievement-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="achievement-details">
+                                <span class="achievement-value">99.9%</span>
+                                <span class="achievement-label">ຄວາມແມ່ນຍຳຂອງລະບົບ</span>
+                            </div>
+                        </div>
+                        
+                        <div class="achievement-item">
+                            <div class="achievement-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="achievement-details">
+                                <span class="achievement-value">20+</span>
+                                <span class="achievement-label">ຊົ່ວໂມງປະຢັດ/ອາທິດ</span>
+                            </div>
+                        </div>
+                        
+                        <div class="achievement-item">
+                            <div class="achievement-icon">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="achievement-details">
+                                <span class="achievement-value">4.8/5</span>
+                                <span class="achievement-label">ຄະແນນຄວາມພໍໃຈ</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="story-footer">
+                    <p class="signature">ດ້ວຍຄວາມມຸ່ງໝັ້ນພັດທະນາ</p>
+                    <div class="signature-name">
+                        <i class="fas fa-signature"></i>
+                        <span>DEVSOM AI</span>
+                    </div>
+                    <p class="current-date" id="story-date">ມັງກອນ 2024</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- เพิ่ม Footer ในส่วนท้ายของ body -->
+<footer>
+    <div class="footer-container">
+        <div class="footer-logo">
+            <i class="fas fa-piggy-bank"></i>
+            <h2>ລະບົບຈັດການຮັບເງິນຝາກ</h2>
+        </div>
+        
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>ຂໍ້ມູນຕິດຕໍ່</h3>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>spschannel30@gmail.com</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <span>020-5598-2850</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>ພັດທະນາໂດຍ DEVSOM AI</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h3>ຜູ້ພັດທະນາລະບົບ</h3>
+                <div class="developer-info">
+                    <div class="developer-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="developer-details">
+                        <div class="developer-name">DEVSOM AI</div>
+                        <div class="developer-role">ຜູ້ພັດທະນາລະບົບ ແລະ ດູແລບຳລຸງຮັກສາ</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h3>ຕິດຕາມພວກເຮົາ</h3>
+                <div class="social-links">
+                    <a href="mailto:spschannel30@gmail.com" class="social-link" title="ອີເມວ">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                    <a href="tel:02055982850" class="social-link" title="ໂທລະສັບ">
+                        <i class="fas fa-phone"></i>
+                    </a>
+                    <a href="#" class="social-link" title="YouTube">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                    <a href="https://www.facebook.com/share/17zJgS1Ymh/" class="social-link" title="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <div class="copyright">
+                <i class="far fa-copyright"></i>
+                <span id="current-year">2024</span>
+                <span> ລະບົບຈັດການຮັບເງິນຝາກ | ພັດທະນາໂດຍ DEVSOM AI</span>
+            </div>
+            <p style="margin-top: 5px;">ເວີຊັນ 1.0 | ອັບເດດລ່າສຸດ: ມັງກອນ 2026</p>
+        </div>
+    </div>
+</footer>
+<script src="script.js"></script>
+</body>
+</html>
